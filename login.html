@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deuna! | Login Mobile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f6eefe;
+            --primary: #4a1b82;
+            --text-dark: #202020;
+            --text-muted: #555555;
+            --white: #ffffff;
+            --card-purple: #e0d1f0;
+            --info-cream: #fef4e5;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+            height: 100dvh; /* Usa la altura dinámica si está disponible */
+            overflow: hidden; /* Evita que haya rebote o scroll */
+        }
+        /* Contenedor adaptado para encajar todo sin scroll */
+        .mobile-container {
+            width: 100%;
+            max-width: 480px; 
+            background-color: var(--bg-color);
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly; /* Distribuye en el espacio disponible */
+            padding: 10px 20px;
+        }
+        
+        /* Header / Logo */
+        .header {
+            text-align: center;
+        }
+        .header img {
+            height: 55px; /* Aumentado a petición */
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 13px; /* Reducido */
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* Tarjeta principal de Features */
+        .features-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 4px 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0; /* Reducido */
+            border-bottom: 1px solid #f2f2f2;
+            gap: 12px;
+        }
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        .feature-icon {
+            font-size: 22px; 
+            width: 30px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .feature-text {
+            flex: 1;
+        }
+        .feature-text h4 {
+            font-size: 13px; /* Reducido */
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        .feature-text p {
+            font-size: 11px; /* Reducido */
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+
+        /* Tarjeta de Verificación */
+        .verify-card {
+            background: var(--card-purple);
+            border-radius: 14px;
+            padding: 12px 16px; /* Reducido */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .verify-text {
+            flex: 1;
+            padding-right: 12px;
+        }
+        .verify-text h4 {
+            font-size: 13px;
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        .verify-text p {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+        .verify-icon-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .verify-icon {
+            background: #cdb4e9;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 16px;
+        }
+        .verify-arrow {
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 12px;
+        }
+
+        /* Alerta de Info */
+        .info-alert {
+            background: var(--info-cream);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-icon {
+            background: var(--text-dark);
+            color: var(--info-cream);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+            font-family: monospace;
+        }
+        .info-alert p {
+            font-size: 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Botones */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Reducido el gap entre botones */
+        }
+        .btn {
+            width: 100%;
+            padding: 14px; /* Reducido */
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+        .btn:active {
+            opacity: 0.8;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        
+        <div class="header">
+            <!-- La imagen "logo2.png" de la carpeta img -->
+            <img src="img/logo2.png" alt="Deuna Logo" onerror="this.src='https://via.placeholder.com/150x50/f6eefe/4a1b82?text=deuna!'">
+            <p>Mejoramos para traerte más beneficios</p>
+        </div>
+
+        <div class="features-card">
+            <div class="feature-item">
+                <div class="feature-icon">👛</div>
+                <div class="feature-text">
+                    <h4>Crea tu cuenta de ahorros digital</h4>
+                    <p>gratuita y recargable</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🏦</div>
+                <div class="feature-text">
+                    <h4>Paga a cuentas de otros bancos</h4>
+                    <p>¡Fácil y seguro!</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">💸</div>
+                <div class="feature-text">
+                    <h4>Recarga tu cuenta</h4>
+                    <p>desde los principales bancos y cooperativas</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📱</div>
+                <div class="feature-text">
+                    <h4>Cobra con tu QR</h4>
+                    <p>y recibe el pago en tu nueva cuenta Deuna</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="verify-card">
+            <div class="verify-text">
+                <h4>Verifica los pagos que recibiste</h4>
+                <p>Escanea el QR del comprobante de pago</p>
+            </div>
+            <div class="verify-icon-wrapper">
+                <div class="verify-icon">🛡️</div>
+                <div class="verify-arrow">❯</div>
+            </div>
+        </div>
+
+        <div class="info-alert">
+            <div class="info-icon">i</div>
+            <p>Para registrarte ten tu cédula a la mano</p>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="window.location.href='login2.html'">Continuar</button>
+            <button class="btn btn-outline">Soy menor de edad</button>
+        </div>
+
+    </div>
+</body>
+</html>

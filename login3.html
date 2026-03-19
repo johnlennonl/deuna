@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deuna! | Instrucciones Selfie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f6eefe;
+            --primary: #291254; 
+            --text-dark: #202020;
+            --text-muted: #6b7a8a; 
+            --white: #ffffff;
+        }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg-color);
+            display: flex; justify-content: center;
+            height: 100vh; height: 100dvh; overflow: hidden;
+        }
+        .mobile-container {
+            width: 100%; max-width: 480px; 
+            background-color: var(--bg-color);
+            height: 100%; display: flex; flex-direction: column;
+            padding: 20px 24px; position: relative;
+        }
+        
+        .progress-bar {
+            width: 100%; height: 3px; background: #e0d0eb; /* light purple */
+            margin-bottom: 24px; margin-top: 10px; border-radius: 2px; position: relative;
+        }
+        .progress-fill {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 60%;
+            background: #23583c; 
+            border-radius: 2px;
+        }
+
+        h1 {
+            font-size: 26px; font-weight: 600; color: var(--text-dark);
+            text-align: center; margin-bottom: 12px; letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 13px; color: var(--text-muted); text-align: center;
+            line-height: 1.4; margin-bottom: 50px; padding: 0 10px;
+        }
+
+        .avatar-container {
+            display: flex; flex-direction: column; align-items: center;
+            flex: 1;
+        }
+        .avatar-circle {
+            width: 220px; height: 220px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden; margin-bottom: 30px;
+            background: #f0f0f0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .avatar-circle img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .avatar-note {
+            font-size: 14px; color: var(--text-dark); font-weight: 500;
+        }
+
+        .btn {
+            width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 15px; font-weight: 600; text-align: center;
+            cursor: pointer; border: none; transition: all 0.2s;
+            background: var(--primary); color: #fff; margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:active { opacity: 0.8; }
+        .btn:disabled { background: #b0a5c4; cursor: not-allowed; }
+        
+        /* Spinner CSS */
+        .spinner {
+            display: inline-block;
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+
+        /* Error notification */
+        .error-message {
+            color: #d9414e; font-size: 13px; text-align: center; font-weight: 500;
+            margin-bottom: 10px; opacity: 0; transition: opacity 0.3s;
+        }
+        .error-message.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Barra de progreso -->
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+
+        <h1>Tómate una selfie</h1>
+        <p class="subtitle" id="subtitle-text">Para validar tu identidad, la foto que te tomes debe coincidir con la de tu cédula.</p>
+
+        <div class="avatar-container">
+            <div class="avatar-circle">
+                <img src="img/selfie.jpg" alt="Instrucción de selfie">
+            </div>
+            <p class="avatar-note">Evita usar accesorios</p>
+        </div>
+
+        <p class="error-message" id="error-msg">Hubo un problema al validar tu rostro. Por favor, intenta de nuevo con mejor iluminación.</p>
+        <button class="btn" id="btn-entendido">Entendido</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('btn-entendido');
+        const errorMsg = document.getElementById('error-msg');
+        
+        // Verifica si venimos de la camara
+        const urlParams = new URLSearchParams(window.location.search);
+        const isValidating = urlParams.get('validating') === 'true';
+        
+        if (isValidating) {
+            // Estado de validación
+            btn.innerHTML = '<span class="spinner"></span> Validando';
+            btn.disabled = true;
+
+            // Lógica de simulación: 1 intento fallido, 2 intento éxito.
+            let attempts = parseInt(sessionStorage.getItem('captureAttempts')) || 0;
+
+            setTimeout(() => {
+                if (attempts === 1) {
+                    // Fallo simulado
+                    errorMsg.classList.add('visible');
+                    btn.innerHTML = 'Reintentar';
+                    btn.disabled = false;
+                    
+                    // Al darle click, vuelve a la camara
+                    btn.onclick = () => {
+                        window.location.href = 'camera.html';
+                    };
+                } else if (attempts >= 2) {
+                    // Éxito simulado -> Mandar a clave segura
+                    window.location.href = 'login4.html';
+                }
+            }, 2500); // 2.5 segundos de carga
+        } else {
+            // Estado inicial, borramos contador por si acaso
+            sessionStorage.removeItem('captureAttempts');
+            btn.onclick = () => {
+                window.location.href = 'camera.html';
+            };
+        }
+    </script>
+</body>
+</html>

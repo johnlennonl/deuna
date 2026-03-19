@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deuna! | Cargando...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #3b285c;
+        }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background-color: var(--bg-color);
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; height: 100dvh; overflow: hidden;
+        }
+        .mobile-container {
+            width: 100%; max-width: 480px; 
+            background-color: var(--bg-color);
+            height: 100%; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .logo-img {
+            height: 60px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .fallback-logo {
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            animation: pulse 2s infinite ease-in-out;
+            display: none;
+        }
+        .fallback-logo span {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <img src="img/logo2.png" alt="Deuna Logo" class="logo-img" id="main-logo" onerror="showFallback()">
+        <div class="fallback-logo" id="fallback-logo">deuna<span>!</span></div>
+    </div>
+    <script>
+        function showFallback() {
+            document.getElementById('main-logo').style.display = 'none';
+            document.getElementById('fallback-logo').style.display = 'block';
+        }
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 4000);
+    </script>
+</body>
+</html>

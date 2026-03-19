@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deuna! | Crea tu clave</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f6eefe;
+            --primary: #291254; 
+            --text-dark: #202020;
+            --text-muted: #6b7a8a; 
+            --border-color: #a8a8a8;
+            --success: #118f50; /* Verde oscuro para los checks */
+            --disabled-bg: #e6e6e6; /* Color grisado del botón */
+            --disabled-text: #a8a8a8;
+        }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg-color);
+            display: flex; justify-content: center;
+            height: 100vh; height: 100dvh; overflow: hidden;
+        }
+        .mobile-container {
+            width: 100%; max-width: 480px; 
+            background-color: var(--bg-color);
+            height: 100%; display: flex; flex-direction: column;
+            padding: 24px; position: relative;
+        }
+        
+        /* Top Progress */
+        .progress-container {
+            position: relative;
+            margin-bottom: 24px; margin-top: 10px;
+        }
+        .progress-bar {
+            width: 100%; height: 3px; background: #e0d0eb; 
+            border-radius: 2px; position: relative;
+        }
+        .progress-fill {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 90%;
+            background: #23583c; 
+            border-radius: 2px;
+        }
+        .bubble {
+            position: absolute; right: 0; top: -32px;
+            background: #23583c; color: white;
+            font-size: 11px; font-weight: 600;
+            padding: 4px 10px; border-radius: 8px;
+        }
+        .bubble::after {
+            content: ''; position: absolute;
+            bottom: -4px; right: 15px;
+            border-width: 5px 5px 0;
+            border-style: solid;
+            border-color: #23583c transparent transparent transparent;
+        }
+
+        h1 {
+            font-size: 24px; font-weight: 700; color: var(--text-dark);
+            line-height: 1.25; margin-bottom: 12px; letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 13px; color: var(--text-muted); 
+            line-height: 1.4; margin-bottom: 24px;
+        }
+
+        /* Password Input */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 18px 16px;
+            padding-right: 80px;
+            border: 1px solid var(--border-color); /* based on screenshot it has a dark border */
+            border-radius: 12px;
+            font-size: 15px;
+            color: var(--text-dark);
+            outline: none;
+            background: transparent;
+            transition: border-color 0.2s;
+        }
+        .input-field:focus {
+            border-color: var(--primary);
+        }
+        
+        /* Right action icons inside input */
+        .input-actions {
+            position: absolute;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toggle-pwd {
+            font-size: 18px; color: var(--text-dark); cursor: pointer;
+            text-decoration: none; user-select: none;
+        }
+        .status-icon {
+            font-size: 16px; color: var(--success); display: none;
+        }
+        .status-icon.visible {
+            display: inline-block;
+        }
+
+        /* Rules List */
+        .rules-list {
+            list-style: none;
+            flex: 1; /* Pushes the button down */
+        }
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+        .rule-icon {
+            font-size: 14px;
+            margin-top: -1px;
+            color: #a0a0a0;
+            transition: color 0.2s;
+        }
+        .rule-item.valid {
+            color: var(--success);
+        }
+        .rule-item.valid .rule-icon {
+            color: var(--success);
+        }
+
+        /* Fixed Button at Bottom */
+        .btn {
+            width: 100%; padding: 18px; border-radius: 14px;
+            font-size: 16px; font-weight: 600; text-align: center;
+            cursor: pointer; border: none; transition: all 0.2s;
+            background: var(--disabled-bg); color: var(--disabled-text);
+            margin-bottom: 15px;
+        }
+        .btn.active {
+            background: var(--primary); color: #fff;
+        }
+        .btn.active:active {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Progress Bar & Bubble -->
+        <div class="progress-container">
+            <div class="bubble">¡Muy bien!</div>
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+        </div>
+
+        <h1>Para terminar, crea una clave segura</h1>
+        <p class="subtitle">Esta es tu clave de ingreso. Luego, podrás activar la opción de huella dactilar o Face ID para entrar.</p>
+
+        <div class="input-wrapper">
+            <input type="password" id="password" class="input-field" placeholder="Ingresa tu clave">
+            <div class="input-actions">
+                <span class="toggle-pwd" id="toggle-pwd">👁️‍🗨️</span>
+                <span class="status-icon" id="main-status">✅</span>
+            </div>
+        </div>
+
+        <ul class="rules-list">
+            <li class="rule-item" id="rule-length">
+                <span class="rule-icon">✔️</span>
+                <span>Debe tener minimo 8 caracteres</span>
+            </li>
+            <li class="rule-item" id="rule-chars">
+                <span class="rule-icon">✔️</span>
+                <span>Incluye letras mayusculas y minusculas y al menos un numero</span>
+            </li>
+            <li class="rule-item" id="rule-id">
+                <span class="rule-icon">✔️</span>
+                <span>No debe contener numero de cedula</span>
+            </li>
+            <li class="rule-item" id="rule-special">
+                <span class="rule-icon">✔️</span>
+                <span>No uses estos caracteres * - &lt; &gt; \ /</span>
+            </li>
+            <li class="rule-item" id="rule-sequence">
+                <span class="rule-icon">✔️</span>
+                <span>No uses secuencias o espacios (Ej: 123 o abc)</span>
+            </li>
+        </ul>
+
+        <button id="btn-continuar" class="btn" disabled>Continuar</button>
+    </div>
+
+    <script>
+        const pwdInput = document.getElementById('password');
+        const togglePwd = document.getElementById('toggle-pwd');
+        const mainStatus = document.getElementById('main-status');
+        const btnContinuar = document.getElementById('btn-continuar');
+
+        // Referencias a las reglas en el DOM
+        const rules = {
+            length: document.getElementById('rule-length'),
+            chars: document.getElementById('rule-chars'),
+            id: document.getElementById('rule-id'),
+            special: document.getElementById('rule-special'),
+            sequence: document.getElementById('rule-sequence')
+        };
+
+        // Simulamos un número de cédula hipotético introducido en un paso anterior
+        const userCedula = "1234567890";
+
+        // Función para validar secuencias y espacios
+        function checkSequence(str) {
+            str = str.toLowerCase();
+            const sequences = ["123", "234", "345", "456", "567", "678", "789", "890", "abc", "bcd", "cde", "def", "efg", "fgh", "ghi", "hij", "ijk", "jkl", "klm", "lmn", "mno", "nop", "opq", "pqr", "qrs", "rst", "stu", "tuv", "uvw", "vwx", "wxy", "xyz"];
+            for (let seq of sequences) {
+                if (str.includes(seq)) return true; // Contiene secuencia
+            }
+            if (/\s/.test(str)) return true; // Contiene espacios en blanco
+            return false;
+        }
+
+        // Lógica de chequeo en tiempo real
+        pwdInput.addEventListener('input', () => {
+            const val = pwdInput.value;
+            const hasValue = val.length > 0;
+            
+            // 1. Min 8 caracteres
+            const rLength = val.length >= 8;
+            
+            // 2. Incluye mayúsculas, minúsculas y un número
+            const rChars = /[A-Z]/.test(val) && /[a-z]/.test(val) && /[0-9]/.test(val);
+            
+            // 3. No contiene número de cédula
+            const rId = hasValue ? !val.includes(userCedula) : false;
+
+            // 4. No usar caracteres especiales prohibidos
+            // Bloquea especificamente * - < > \ /
+            const rSpecial = hasValue ? !/[*\-<>\\\/]/.test(val) : false;
+
+            // 5. No secuencias ni espacios
+            const rSequence = hasValue ? !checkSequence(val) : false;
+
+            // Actualizar interfaz cambiando clases a 'valid' (verde) si se cumple
+            rules.length.className = rLength ? 'rule-item valid' : 'rule-item';
+            rules.chars.className = rChars ? 'rule-item valid' : 'rule-item';
+            rules.id.className = rId ? 'rule-item valid' : 'rule-item';
+            rules.special.className = rSpecial ? 'rule-item valid' : 'rule-item';
+            rules.sequence.className = rSequence ? 'rule-item valid' : 'rule-item';
+
+            // Comprobar si todas rigen para activar el check general y el botón
+            const allValid = rLength && rChars && rId && rSpecial && rSequence;
+
+            if (allValid) {
+                mainStatus.classList.add('visible');
+                btnContinuar.classList.add('active');
+                btnContinuar.disabled = false;
+            } else {
+                mainStatus.classList.remove('visible');
+                btnContinuar.classList.remove('active');
+                btnContinuar.disabled = true;
+            }
+        });
+
+        // Alternar visualización del password
+        togglePwd.addEventListener('click', () => {
+            const currentType = pwdInput.getAttribute('type');
+            pwdInput.setAttribute('type', currentType === 'password' ? 'text' : 'password');
+        });
+    </script>
+</body>
+</html>
